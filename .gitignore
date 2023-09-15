@@ -2,3 +2,4 @@ storage/
 venv/
 volumes/
 __pycache__/
+openai.key

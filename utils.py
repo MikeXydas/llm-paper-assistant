@@ -26,7 +26,8 @@ def download_pdfs(pdf_links_path, download_dir):
             f.write(response.content)
 
 
-if __name__ == "__main__":
-    pdf_links_path = "storage/paper_links.txt"
-    download_dir = "storage/papers/"
-    download_pdfs(pdf_links_path, download_dir)
+def get_embedding_dimension(which_emb_model):
+    if which_emb_model=="local":
+        return 768
+    elif which_emb_model=="openai":
+        return 1536

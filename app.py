@@ -6,7 +6,7 @@ from utils import time_it
 
 app = FastAPI()
 
-query_engine = initialise_query_engine()
+query_engine = initialise_query_engine(which_llm="local")
 
 @app.get("/")
 def read_root():
