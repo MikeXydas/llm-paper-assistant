@@ -5,7 +5,11 @@ import requests
 
 def ask_query(question):
     response = requests.get(f"http://localhost:1457/assistant/{question}")
-    return response.json()["response"]
+    response = response.json()["response"]
+    response_text = response["response"]
+    response_file_and_page =[(node["node"]["metadata"]["file_name"], node["node"]["metadata"]["page_label"]) for node in response["source_nodes"]]
+
+    return response_text, response_file_and_page
 
 
 def main():
@@ -25,7 +29,11 @@ def main():
         
         with st.chat_message("assistant"):
             with st.spinner('Executing...'):
-                st.write(ask_query(user_question))
+                response_text, response_file_and_page = ask_query(user_question)
+                st.write(response_text)
+                st.write("### References:")
+                for file_name, page_label in response_file_and_page:
+                    st.write(f">> File: {file_name} (page: {page_label})")
 
 
 if __name__ == "__main__":

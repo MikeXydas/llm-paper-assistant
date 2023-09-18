@@ -79,7 +79,7 @@ def initialise_query_engine(which_llm):
 
     index = VectorStoreIndex.from_documents(documents=load_documents(), 
                                             service_context=service_context,
-                                            storage_context=storage_context)
+                                            storage_context=storage_context, show_progress=True)
     return index.as_query_engine()
 
     # response = query_engine.query("Can you give me examples of multi-task training for text-to-sql?")
