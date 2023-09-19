@@ -8,6 +8,7 @@ app = FastAPI()
 
 query_engine = initialise_query_engine(which_llm="local")
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
@@ -20,10 +21,7 @@ def read_item(query: str):
 
 
 def main():
-    uvicorn.run("app:app",
-                host='0.0.0.0',
-                port=1457,
-                workers=1)
+    uvicorn.run("app:app", host="0.0.0.0", port=1457, workers=1)
 
 
 if __name__ == "__main__":
