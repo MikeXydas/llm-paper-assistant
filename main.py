@@ -1,5 +1,5 @@
-import streamlit as st
 import requests
+import streamlit as st
 
 
 def ask_query(question):

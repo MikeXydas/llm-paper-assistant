@@ -1,16 +1,11 @@
 import openai
-
 from langchain.embeddings import HuggingFaceEmbeddings
-from llama_index import (
-    SimpleDirectoryReader,
-    VectorStoreIndex,
-    ServiceContext,
-)
-from llama_index.llms import LlamaCPP, OpenAI
-from llama_index.llms.llama_utils import messages_to_prompt, completion_to_prompt
-from llama_index.vector_stores import MilvusVectorStore
-from llama_index.storage.storage_context import StorageContext
+from llama_index import ServiceContext, SimpleDirectoryReader, VectorStoreIndex
 from llama_index.embeddings import OpenAIEmbedding
+from llama_index.llms import LlamaCPP, OpenAI
+from llama_index.llms.llama_utils import completion_to_prompt, messages_to_prompt
+from llama_index.storage.storage_context import StorageContext
+from llama_index.vector_stores import MilvusVectorStore
 
 from utils import get_embedding_dimension, time_it
 
@@ -23,7 +18,8 @@ def load_chat_model(which_llm):
     if which_llm == "local":
         llm = LlamaCPP(
             # optionally, you can set the path to a pre-downloaded model instead of model_url
-            model_url="https://huggingface.co/TheBloke/Llama-2-7b-Chat-GGUF/resolve/main/llama-2-7b-chat.Q3_K_M.gguf",
+            model_url="https://huggingface.co/TheBloke/Llama-2-13B-chat-GGUF/resolve/main/llama-2-13b-chat.Q4_0.gguf",
+            # model_url="https://huggingface.co/TheBloke/Mistral-7B-v0.1-GGUF/resolve/main/mistral-7b-v0.1.Q8_0.gguf",
             model_path=None,
             temperature=0.1,
             max_new_tokens=256,
@@ -70,18 +66,18 @@ def initialise_query_engine(which_llm):
     # get our service context (this is a wrapper around the index and the models)
     service_context = ServiceContext.from_defaults(
         llm=load_chat_model(which_llm=which_llm),
-        embed_model=load_embedding_model(which_llm=which_llm)
+        embed_model=load_embedding_model(which_llm=which_llm),
     )
-    
-    vector_store = MilvusVectorStore(collection_name="papers", dim=get_embedding_dimension(which_llm), overwrite=True)
+
+    vector_store = MilvusVectorStore(
+        collection_name="papers", dim=get_embedding_dimension(which_llm), overwrite=True
+    )
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-
-    index = VectorStoreIndex.from_documents(documents=load_documents(), 
-                                            service_context=service_context,
-                                            storage_context=storage_context, show_progress=True)
+    index = VectorStoreIndex.from_documents(
+        documents=load_documents(),
+        service_context=service_context,
+        storage_context=storage_context,
+        show_progress=True,
+    )
     return index.as_query_engine()
-
-    # response = query_engine.query("Can you give me examples of multi-task training for text-to-sql?")
-    # print(response)
-

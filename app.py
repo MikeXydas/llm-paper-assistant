@@ -1,6 +1,6 @@
 import uvicorn
-
 from fastapi import FastAPI
+
 from llm import initialise_query_engine
 from utils import time_it
 
@@ -17,7 +17,8 @@ def read_root():
 @time_it
 @app.get("/assistant/{query}")
 def read_item(query: str):
-    return {"response": query_engine.query(query)}
+    response = query_engine.query(query)
+    return {"response": response}
 
 
 def main():
